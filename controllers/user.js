@@ -15,22 +15,20 @@
  }
 
 
- async function handleUserLogin(req,res) {
-    const { email , password} = req.body;
-     const user = await User.findOne({email,password});
-     if(!user)
-        return res.render("login",{
-            error: "Invalid UserName or Password"
-        })
-
-
-   const sessionId = uuidv4();
-   setUser(sessionId, user);
-   res.cookie("uid", sessionId)
-
+ async function handleUserLogin(req, res) {
+   const { email, password } = req.body;
+   const user = await User.findOne({ email, password });
+ 
+   if (!user) {
+     return res.render("login", { error: "Invalid Username or Password" });
+   }
+ 
+   const token = setUser(user);  // Generates JWT with only user ID
+   res.cookie("uid", token, { httpOnly: true, secure: true });
+ 
    return res.redirect("/");
-}
-
+ }
+ 
 
  module.exports  = {
     handleUserSignUp,
